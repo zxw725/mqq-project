@@ -1,0 +1,79 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 4101535 */
+  src: url('~@/static/iconfont/iconfont.woff2?t=1700140326381') format('woff2'),
+       url('~@/static/iconfont/iconfont.woff?t=1700140326381') format('woff'),
+       url('~@/static/iconfont/iconfont.ttf?t=1700140326381') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-a-pinglun2:before {
+  content: "\e60f";
+}
+
+.icon-fenxiang:before {
+  content: "\e60e";
+}
+
+.icon-a-dianzan1:before {
+  content: "\e60c";
+}
+
+.icon-pinglun:before {
+  content: "\e60d";
+}
+
+.icon-fanhui2:before {
+  content: "\e60b";
+}
+
+.icon-touxiang:before {
+  content: "\e608";
+}
+
+.icon-xiaoxi:before {
+  content: "\e609";
+}
+
+.icon-QQkongjian:before {
+  content: "\e60a";
+}
+
+.icon-saoyisao:before {
+  content: "\e604";
+}
+
+.icon-jiahao:before {
+  content: "\e605";
+}
+
+.icon-tianjiahaoyou:before {
+  content: "\e606";
+}
+
+.icon-qunzu:before {
+  content: "\e607";
+}
+
+.icon-fanhui:before {
+  content: "\e603";
+}
+
+.icon-jianhao:before {
+  content: "\e600";
+}
+
+.icon-jiahao2-fill:before {
+  content: "\e601";
+}
+
+.icon-guanbi2-fill:before {
+  content: "\e602";
+}
+
