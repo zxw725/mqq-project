@@ -35,7 +35,7 @@ spring:
       max-request-size: 50MB
   redis:
     database: 1
-    host: localhost
+    host: 1.12.57.205
     lettuce:
       pool:
         max-active: 8   #最大连接数据库连接数,设 0 为没有限制
