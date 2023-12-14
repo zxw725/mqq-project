@@ -314,68 +314,138 @@
 					}
 				});
 				console.log(this.username);
-				if(uni.getStorageSync("zones")){
-					this.zones = uni.getStorageSync("zones")
-				}
-				// getAllZones(this.username).then(res => {
-				// 	this.zones = res.data.data
-				// 	this.zones.sort((b, a) => new Date(a.time) - new Date(b.time));
-				// 	this.zones.filter((item,index) => {
-				// 		if (item.zone.pictures != null) {
-				// 			item.zone.pictures = JSON.parse(item.zone.pictures)
-				// 			item.zone.pictures.filter((item1,index1) => {
-				// 				uni.downloadFile({
-				// 					url: this.baseUrl + item1.url, // 服务器图片地址
-				// 					success: (res) => {
-				// 						if (res.statusCode === 200) {
-				// 							console.log('下载成功', res.tempFilePath);
-				// 							item1.url = res.tempFilePath
-				// 							// if()
-				// 							// console.log(this.zones);
-				// 							uni.setStorageSync("zones",this.zones)
-				// 							this.$forceUpdate()
-				// 							// 下载成功后将图片保存到相册
-				// 							//      uni.saveImageToPhotosAlbum({
-				// 							//          filePath: res.tempFilePath,
-				// 							//          success: function () {
-				// 							//              uni.showToast({
-				// 							//                  title: '图片保存成功'
-				// 							//              });
-				// 							//          },
-				// 							//          fail: function (err) {
-				// 							//              console.log('图片保存失败', err);
-				// 							//              // 处理没有权限的情况
-				// 							//              uni.showModal({
-				// 							//                  content: '检测到没有权限，需要你确认授权',
-				// 							//                  confirmText: '去设置',
-				// 							//                  success: modalRes => {
-				// 							//                      if (modalRes.confirm) {
-				// 							//                          // 打开设置页面让用户自行开启
-				// 							//                          uni.openSetting();
-				// 							//                      }
-				// 							//                  }
-				// 							//              });
-				// 							//          }
-				// 							//      });
 
-				// 						}
-				// 					},
-				// 					fail: (err) => {
-				// 						console.log('下载失败', err);
-				// 						uni.showToast({
-				// 							title: '下载失败',
-				// 							icon: 'none'
-				// 						});
-				// 					}
-				// 				});
-				// 			})
-				// 		}
-				// 	})
-				// 	this.$forceUpdate()
+				getAllZones(this.username).then(res => {
+					var zones = res.data.data
+					if (uni.getStorageSync("zones")) {
+						console.log(uni.getStorageSync("zones"));
+						this.zones = uni.getStorageSync("zones")
+						console.log(this.zones);
+					}
+					var isAddZone = this.zones == '' ? true : false
+					// this.zones = res.data.data
+					zones.sort((b, a) => new Date(a.time) - new Date(b.time));
+					this.$forceUpdate()
+					// this.zones = this.zones.filter((item, index) =>{
+					// 	console.log(!(zones.some(obj => obj.zone.id == item.zone.id)));
+					// }
 
-				// 	console.log(this.zones);
-				// })
-				
+					// )
+
+					console.log(this.zones, zones);
+					zones.filter((item, index) => {
+						this.zones.filter((item, index) => {
+							// console.log(!(zones.some(obj => obj.zone.id == item.zone.id)));
+							if (!(zones.some(obj => obj.zone.id == item.zone.id))) {
+								this.zones.splice(index, 1);
+
+							}
+							uni.setStorageSync("zones",
+								this.zones)
+							this.$forceUpdate()
+						})
+
+						if (isAddZone || item.zone.id > this.zones[0].zone.id) {
+							console.log(item.zone.id);
+
+
+							this.zones.some(obj => {
+								console.log(obj.zone.id, item.zone.id);
+								// obj.zone.id == item.zone.id
+							})
+							console.log(!(this.zones.some(obj => obj.zone.id == item.zone.id)));
+							if (!(this.zones.some(obj => obj.zone.id == item.zone.id))) {
+								if (item.zone.pictures != null) {
+									item.zone.pictures = JSON.parse(item.zone.pictures)
+									item.zone.pictures.filter((item1, index1) => {
+										uni.downloadFile({
+											url: this.baseUrl + item1.url, // 服务器图片地址
+											success: (res) => {
+												if (res.statusCode === 200) {
+													console.log('下载成功', res
+														.tempFilePath);
+													item1.url = res.tempFilePath
+													if (index1 == item.zone.pictures
+														.length - 1) {
+														this.zones = [item, ...this
+															.zones
+														]
+														uni.setStorageSync("zones",
+															this.zones)
+
+														this.$forceUpdate()
+													}
+
+													// this.zones.filter(
+													// item2 => {
+													// 	if (item2.zone.id ==
+													// 		item.zone.id) {
+													// 		this.zones.push(item1)
+
+													// 	}
+
+													// })
+													console.log(this.zones);
+
+
+
+
+													// if()
+													// console.log(this.zones);
+
+													// 下载成功后将图片保存到相册
+													//      uni.saveImageToPhotosAlbum({
+													//          filePath: res.tempFilePath,
+													//          success: function () {
+													//              uni.showToast({
+													//                  title: '图片保存成功'
+													//              });
+													//          },
+													//          fail: function (err) {
+													//              console.log('图片保存失败', err);
+													//              // 处理没有权限的情况
+													//              uni.showModal({
+													//                  content: '检测到没有权限，需要你确认授权',
+													//                  confirmText: '去设置',
+													//                  success: modalRes => {
+													//                      if (modalRes.confirm) {
+													//                          // 打开设置页面让用户自行开启
+													//                          uni.openSetting();
+													//                      }
+													//                  }
+													//              });
+													//          }
+													//      });
+												}
+											},
+											fail: (err) => {
+												console.log('下载失败', err);
+												uni.showToast({
+													title: '下载失败',
+													icon: 'none'
+												});
+											}
+										});
+									})
+
+								} else {
+									this.zones = [item, ...this.zones]
+									uni.setStorageSync("zones",
+										this.zones)
+
+									this.$forceUpdate()
+								}
+
+							}
+
+						}
+					})
+
+					this.$forceUpdate()
+
+					console.log(this.zones);
+				})
+
 				this.screenHeight = uni.getStorageSync('screenHeight')
 				console.log(this.screenHeight);
 
