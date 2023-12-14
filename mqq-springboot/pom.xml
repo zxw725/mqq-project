@@ -123,6 +123,12 @@
             <artifactId>mybatis-plus-join-boot-starter</artifactId>
             <version>1.4.5</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.github.yulichang</groupId>-->
+<!--            <artifactId>mybatis-plus-join</artifactId>-->
+<!--            <version>1.2.4</version>-->
+<!--        </dependency>-->
+
         <!--上传图片-->
         <dependency>
             <groupId>commons-io</groupId>

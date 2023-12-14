@@ -2,7 +2,7 @@ import request from "../utils/request.js";
 
 const md5 = require('blueimp-md5')
 
-// 发送消息
+// 发表动态
 export function addZone(data) {
 
 	return request({
@@ -12,7 +12,7 @@ export function addZone(data) {
 	})
 }
 
-// 获取聊天信息
+// 获取所有动态
 export function getAllZones(id) {
 
 	return request({

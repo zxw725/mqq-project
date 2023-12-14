@@ -42,6 +42,22 @@
 							</view> -->
 						</view>
 					</view>
+					<view class="praise-comment">
+						<view class="iconfont icon-a-dianzan1">
+
+						</view>
+						<view class="iconfont icon-a-pinglun2">
+
+						</view>
+						<view class="iconfont icon-fenxiang">
+
+						</view>
+					</view>
+
+					<view class="praise-user" v-for="(item1,index1) in getAllPraise(item.zone.id)">
+						{{index1}}
+						<!-- <image :src="baseUrl+item1.url" mode=""></image> -->
+					</view>
 				</view>
 
 			</view>
@@ -76,6 +92,10 @@
 	import {
 		getAllZones
 	} from '../api/zone.js'
+	import {
+		praiseZone,
+		getAllPraise
+	} from '../api/zonePraise.js'
 	export default {
 
 		data() {
@@ -126,6 +146,17 @@
 			}
 		},
 		methods: {
+			getAllPraise(id) {
+				// console.log(id);
+				var data = []
+				getAllPraise(id + "").then(res => {
+					console.log(res.data.data);
+					data = res.data.data
+
+				})
+				return data
+				// return [1,2,3]
+			},
 			tapPreview() {
 				this.previewShow = false
 			},
@@ -332,7 +363,6 @@
 					// this.zones = this.zones.filter((item, index) =>{
 					// 	console.log(!(zones.some(obj => obj.zone.id == item.zone.id)));
 					// }
-
 					// )
 
 					console.log(this.zones, zones);
@@ -341,7 +371,6 @@
 							// console.log(!(zones.some(obj => obj.zone.id == item.zone.id)));
 							if (!(zones.some(obj => obj.zone.id == item.zone.id))) {
 								this.zones.splice(index, 1);
-
 							}
 							uni.setStorageSync("zones",
 								this.zones)
@@ -350,16 +379,29 @@
 
 						if (isAddZone || item.zone.id > this.zones[0].zone.id) {
 							console.log(item.zone.id);
-
-
 							this.zones.some(obj => {
 								console.log(obj.zone.id, item.zone.id);
 								// obj.zone.id == item.zone.id
 							})
 							console.log(!(this.zones.some(obj => obj.zone.id == item.zone.id)));
 							if (!(this.zones.some(obj => obj.zone.id == item.zone.id))) {
+								if(isAddZone){
+									this.zones = [...this.zones, item]
+									uni.setStorageSync("zones",
+										this.zones)
+									
+									this.$forceUpdate()
+								}else{
+									this.zones = [ item,...this.zones]
+									uni.setStorageSync("zones",
+										this.zones)
+									
+									this.$forceUpdate()
+								}
+								
 								if (item.zone.pictures != null) {
 									item.zone.pictures = JSON.parse(item.zone.pictures)
+
 									item.zone.pictures.filter((item1, index1) => {
 										uni.downloadFile({
 											url: this.baseUrl + item1.url, // 服务器图片地址
@@ -370,9 +412,7 @@
 													item1.url = res.tempFilePath
 													if (index1 == item.zone.pictures
 														.length - 1) {
-														this.zones = [item, ...this
-															.zones
-														]
+
 														uni.setStorageSync("zones",
 															this.zones)
 
@@ -431,12 +471,6 @@
 										});
 									})
 
-								} else {
-									this.zones = [item, ...this.zones]
-									uni.setStorageSync("zones",
-										this.zones)
-
-									this.$forceUpdate()
 								}
 
 							}
@@ -475,12 +509,23 @@
 </script>
 
 <style scoped>
+	.praise-comment .iconfont {
+		font-size: 50rpx;
+		margin-left: 40rpx;
+	}
+
+	.praise-comment {
+		display: flex;
+		justify-content: end;
+		margin: 20rpx 0;
+	}
+
 	.preview-container image,
 	.preview-container video {
 		width: 750rpx;
 		z-index: 1 !important;
 		opacity: 0.9;
-		height: 100vh ;
+		height: 100vh;
 		z-index: 111;
 	}
 
@@ -493,7 +538,7 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		height: 100% ;
+		height: 100%;
 		overflow: hidden;
 		position: absolute;
 		/* top: ; */

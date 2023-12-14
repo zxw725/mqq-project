@@ -41,6 +41,7 @@ export function selectUser(id) {
 	})
 }
 
+// 获取所有好友
 export function selectAllFriends(id){
 	return request({
 		url: '/userFriend/selectAllFriends',

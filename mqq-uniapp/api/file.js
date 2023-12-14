@@ -1,5 +1,6 @@
 import request from "../utils/request.js";
 
+// 上传文件
 export function uploadZoneFile(data) {
 	return request({
 		url: '/upload/files',
@@ -8,6 +9,7 @@ export function uploadZoneFile(data) {
 	})
 }
 
+// 上传动态照片
 export function uploadImage(data) {
 	return request({
 		url: '/uploadImage',
@@ -16,6 +18,7 @@ export function uploadImage(data) {
 	})
 }
 
+// 上传动态视频
 export function uploadVideo(data) {
 	return request({
 		url: '/uploadVideo',

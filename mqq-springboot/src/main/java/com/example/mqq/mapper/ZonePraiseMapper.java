@@ -2,6 +2,7 @@ package com.example.mqq.mapper;
 
 import com.example.mqq.entity.ZonePraise;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.github.yulichang.base.MPJBaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -13,6 +14,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2023年11月20日
  */
 @Mapper
-public interface ZonePraiseMapper extends BaseMapper<ZonePraise> {
+public interface ZonePraiseMapper extends MPJBaseMapper<ZonePraise> {
 
 }
