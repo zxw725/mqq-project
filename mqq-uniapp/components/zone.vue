@@ -47,11 +47,11 @@
 			</view>
 
 		</view>
-		<view class="preview" v-show="previewShow" @touchstart="onTouchStart" @touchmove="onTouchMove"
-			@touchend="onTouchEnd">
+		<view class="preview" v-show="previewShow" @click="tapPreview()" @touchstart="onTouchStart"
+			@touchmove="onTouchMove" @touchend="onTouchEnd">
 			<view class="preview-container">
 				<view class="" v-if="preview.type=='image'">
-					<image mode="widthFix" :src="baseUrl+preview.url" @click="changeWidth()"></image>
+					<image mode="widthFix" :src="preview.url" @click="changeWidth()"></image>
 				</view>
 				<view class="" v-else v-html="">
 					<video :src="preview.url">
@@ -126,6 +126,9 @@
 			}
 		},
 		methods: {
+			tapPreview() {
+				this.previewShow = false
+			},
 			changeWidth() {
 				if (this.initWidth) {
 					this.imageSize.width = this.primarySize.width
@@ -477,12 +480,12 @@
 		width: 750rpx;
 		z-index: 1 !important;
 		opacity: 0.9;
-		height: calc(100vh - 150rpx);
+		height: 100vh ;
 		z-index: 111;
 	}
 
 	.preview-container video {
-		height: calc(100vh - 150rpx);
+		height: 100vh;
 	}
 
 	.preview-container {
@@ -490,23 +493,23 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		height: calc(100vh - 150rpx);
+		height: 100% ;
 		overflow: hidden;
 		position: absolute;
-		top: 150rpx;
+		/* top: ; */
 		z-index: 1;
 
 
 	}
 
 	.preview {
-		position: absolute;
+		position: fixed;
 		top: 0;
 		left: 0;
 		width: 100%;
 		height: 100%;
 		background-color: black;
-		z-index: 11;
+		z-index: 111;
 	}
 
 	.img-container view {

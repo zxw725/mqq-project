@@ -15,7 +15,7 @@
 							class="head-picture">
 						<view class="message-box">
 							<view class="chat-time">
-								{{item.time}}
+								{{filterTime(item.createdAt)}}
 							</view>
 							<view class="chat-message">
 								{{item.message}}
@@ -77,6 +77,9 @@
 			}
 		},
 		methods: {
+			filterTime(time){
+				return time.split("T"," ")
+			},
 			setCaretPosition(elId, caretPos) {
 				// 设置光标位置
 				const el = uni.createSelectorQuery().select('#' + elId);
