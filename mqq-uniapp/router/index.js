@@ -42,13 +42,14 @@ const routes = [{
 				},
 				]
 			},
-			{
-				path: '/pages/zone/zone',
-				name: 'Zone',
-				component: () => import('@/pages/zone/zone.vue')
-			}
+		
 		]
 
+	},
+	{
+		path: '/pages/zone/zone',
+		name: 'Zone',
+		component: () => import('@/pages/zone/zone.vue')
 	}
 	// 添加其他路由
 ]

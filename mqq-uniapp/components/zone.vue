@@ -9,82 +9,18 @@
 
 			</view>
 		</view>
-		<view class="zone-container-box">
-			<view class="zone-container">
-				<view class="zone-container-item" v-for="(item,index) in zones">
-					<view class="zone-top-container">
-						<image class="zone-picture" :src="baseUrl+item.url" mode=""></image>
-						<view class="zone-name-time">
-							<view class="zone-name">
-								{{item.username}}
-							</view>
-							<view class="zone-time">
-								{{filterTime(item.time)}}
-							</view>
-						</view>
-					</view>
-					<view class="zone-content">
-						<view class="">
-							{{item.zone.content}}
-						</view>
-					</view>
-					<view class="zone-container-picture">
-						<view class="img-container" v-for="(item1,index1) in item.zone.pictures"
-							:class="'img'+(item.zone.pictures.length!=1?0:1)">
-
-							<view v-if="item1.type=='image'" @click="previewImage(index,index1)">
-								<image :src="item1.url" :mode="item.zone.pictures.length==1?'widthFix':item1.size"
-									class=""></image>
-							</view>
-
-							<!-- 	<view class="">
-								{{baseUrl+item1.url}}
-							</view> -->
-						</view>
-					</view>
-					<view class="praise-comment">
-						<view class="iconfont icon-a-dianzan1">
-
-						</view>
-						<view class="iconfont icon-a-pinglun2">
-
-						</view>
-						<view class="iconfont icon-fenxiang">
-
-						</view>
-					</view>
-
-					<view class="praise-user" v-for="(item1,index1) in getAllPraise(item.zone.id)">
-						{{index1}}
-						<!-- <image :src="baseUrl+item1.url" mode=""></image> -->
-					</view>
-				</view>
-
-			</view>
-
-		</view>
-		<view class="preview" v-show="previewShow" @click="tapPreview()" @touchstart="onTouchStart"
-			@touchmove="onTouchMove" @touchend="onTouchEnd">
-			<view class="preview-container">
-				<view class="" v-if="preview.type=='image'">
-					<image mode="widthFix" :src="preview.url" @click="changeWidth()"></image>
-				</view>
-				<view class="" v-else v-html="">
-					<video :src="preview.url">
-					</video>
-				</view>
+		<view class="function-container">
+			<view class="friend-zone" @click="goToZone()">
+				好友动态
 			</view>
 		</view>
+
 
 	</view>
+
 </template>
 
 <script>
-	// import MyEditorWithFormula from './components/MyEditorWithFormula'
-	// import MyEditorWithMention from './components/MyEditorWithMention'
-	import {
-		callWithErrorHandling
-	} from "vue"
 	import {
 		selectUser,
 		selectAllFriends
@@ -92,14 +28,18 @@
 	import {
 		getAllZones
 	} from '../api/zone.js'
+
 	import {
 		praiseZone,
-		getAllPraise
+		getAllPraise,
+		cancelPraiseZone
 	} from '../api/zonePraise.js'
+
 	export default {
 
 		data() {
 			return {
+				showZoneInput: true,
 				headPicture: '',
 				zones: [],
 				username: '',
@@ -142,20 +82,68 @@
 				publiserContent: {},
 				publiserImg: [],
 				loading: true,
-				isPublisher: true
+				isPublisher: true,
+				zonePraise: [],
+				zoneComment: [],
+				isPraising: 1,
+				user: []
 			}
 		},
 		methods: {
-			getAllPraise(id) {
-				// console.log(id);
-				var data = []
-				getAllPraise(id + "").then(res => {
-					console.log(res.data.data);
-					data = res.data.data
-
+			goToZone(){
+				console.log(1111);
+				uni.navigateTo({
+					url:'/pages/zone/zone'
 				})
-				return data
-				// return [1,2,3]
+			},
+			showCommentZone() {
+
+			},
+			userPraiseZone(id, index, index1) {
+				if (this.isPraising) {
+					this.isPraising = 0
+					if (this.zonePraise[index].isPraise) {
+						this.zonePraise[index].isPraise = 0
+						this.zonePraise[index] = this.zonePraise[index].filter(item => {
+
+							console.log(item.id + '', this.username);
+							item.id + '' != this.username
+						})
+						this.$forceUpdate()
+						cancelPraiseZone({
+							zoneId: id,
+							praiserId: this.username
+						}).then(res => {
+							console.log(this.zonePraise[index]);
+
+							this.$forceUpdate()
+							this.isPraising = 1
+							console.log(res);
+						})
+					} else {
+						this.zonePraise[index].isPraise = 1
+						console.log(this.zonePraise[index].isPraise);
+						var obj = {}
+						obj.name = this.user.name
+						obj.id = this.user.id
+						obj.url = this.user.url
+						this.zonePraise[index].push(obj)
+						this.$forceUpdate()
+						praiseZone({
+							zoneId: id,
+							praiserId: this.username
+						}).then(res => {
+							this.isPraising = 1
+							console.log(this.user.name);
+
+
+						})
+					}
+					// = this.zonePraise[index].isPraise == 1 ? 0 : 1
+
+				}
+
+
 			},
 			tapPreview() {
 				this.previewShow = false
@@ -280,15 +268,9 @@
 					const deltaY = y1 - y2;
 					const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 					const scale = distance / this.startDistance;
-					// this.scale = scale
 					this.imageSize.width *= scale;
 					this.imageSize.height *= scale;
-
 					this.startDistance = distance;
-					// this.offsetX = 0
-					// this.offsetY = 0
-					// this.lastOffsetX = 0
-					// this.lastOffsetY = 0
 				}
 			},
 			onTouchEnd() {
@@ -340,7 +322,7 @@
 				return time1
 			},
 			init() {
-
+				this.user = uni.getStorageSync('user');
 				this.username = uni.getStorageSync('uid');
 				uni.getSystemInfo({
 					success: function(res) {
@@ -360,13 +342,17 @@
 					// this.zones = res.data.data
 					zones.sort((b, a) => new Date(a.time) - new Date(b.time));
 					this.$forceUpdate()
-					// this.zones = this.zones.filter((item, index) =>{
-					// 	console.log(!(zones.some(obj => obj.zone.id == item.zone.id)));
-					// }
-					// )
+
 
 					console.log(this.zones, zones);
 					zones.filter((item, index) => {
+						getAllPraise(item.zone.id + '').then(res => {
+							var obj = res.data.data
+							obj.isPraise = res.data.data.some(obj => obj.id == this.username) ? 1 :
+								0
+							this.zonePraise.push(res.data.data)
+							// console.log(obj,res.data.data.some(obj => obj.id == this.username));
+						})
 						this.zones.filter((item, index) => {
 							// console.log(!(zones.some(obj => obj.zone.id == item.zone.id)));
 							if (!(zones.some(obj => obj.zone.id == item.zone.id))) {
@@ -378,30 +364,23 @@
 						})
 
 						if (isAddZone || item.zone.id > this.zones[0].zone.id) {
-							console.log(item.zone.id);
-							this.zones.some(obj => {
-								console.log(obj.zone.id, item.zone.id);
-								// obj.zone.id == item.zone.id
-							})
-							console.log(!(this.zones.some(obj => obj.zone.id == item.zone.id)));
+
 							if (!(this.zones.some(obj => obj.zone.id == item.zone.id))) {
-								if(isAddZone){
+								if (isAddZone) {
 									this.zones = [...this.zones, item]
 									uni.setStorageSync("zones",
 										this.zones)
-									
 									this.$forceUpdate()
-								}else{
-									this.zones = [ item,...this.zones]
+								} else {
+									this.zones = [item, ...this.zones]
 									uni.setStorageSync("zones",
 										this.zones)
-									
+
 									this.$forceUpdate()
 								}
-								
+
 								if (item.zone.pictures != null) {
 									item.zone.pictures = JSON.parse(item.zone.pictures)
-
 									item.zone.pictures.filter((item1, index1) => {
 										uni.downloadFile({
 											url: this.baseUrl + item1.url, // 服务器图片地址
@@ -429,9 +408,6 @@
 
 													// })
 													console.log(this.zones);
-
-
-
 
 													// if()
 													// console.log(this.zones);
@@ -509,6 +485,86 @@
 </script>
 
 <style scoped>
+	
+	.friend-zone{
+		padding: 25rpx 30rpx;
+		box-sizing: border-box;
+		font-size: 38rpx;
+		background-color: white;
+	}
+	.zone-comment {
+		white-space: pre-wrap;
+		width: 100%;
+		max-height: 290rpx;
+		overflow: scroll;
+		background: #F5F5F5;
+	}
+
+	.chat-input {
+		background: white;
+		/* height: 80rpx; */
+		max-height: 320rpx;
+		display: flex;
+		padding: 15rpx 20rpx;
+		box-sizing: border-box;
+		font-size: 35rpx;
+		caret-color: #4772ff;
+		align-items: flex-start;
+		white-space: pre-wrap;
+		width: 100%;
+		border-radius: 10rpx;
+	}
+
+	.bottom-container {
+		/* max-height:400rpx; */
+		display: flex;
+		position: absolute;
+		bottom: 110rpx;
+		width: 100%;
+		/* padding: 18rpx 30rpx; */
+		box-sizing: border-box;
+		background: white;
+		align-items: flex-end;
+		overflow: hidden;
+
+	}
+
+	.comment-input {
+		width: 100%;
+		height: 70rpx;
+		background: #F5F5F5;
+	}
+
+	.comment-user-container {
+		display: flex;
+		margin-top: 20rpx;
+	}
+
+	.comment-head-picture {
+		border-radius: 50%;
+		width: 60rpx;
+		height: 60rpx;
+	}
+
+	.praise-user-container {
+		display: flex;
+		flex-wrap: wrap;
+	}
+
+	.praise-user-container {
+		font-size: 35rpx;
+	}
+
+	.dianzan {
+		font-size: 42rpx;
+		line-height: 45rpx;
+		margin-right: 20rpx;
+	}
+
+	.dianzan1 {
+		color: #12B7F5 !important;
+	}
+
 	.praise-comment .iconfont {
 		font-size: 50rpx;
 		margin-left: 40rpx;
@@ -541,10 +597,7 @@
 		height: 100%;
 		overflow: hidden;
 		position: absolute;
-		/* top: ; */
 		z-index: 1;
-
-
 	}
 
 	.preview {
@@ -621,7 +674,7 @@
 		background-color: white;
 		padding: 30rpx;
 		box-sizing: border-box;
-		margin-bottom: 20rpx;
+		margin-top: 20rpx;
 
 	}
 
@@ -640,7 +693,8 @@
 	.zone-container {
 		width: 100%;
 		overflow-y: scroll;
-
+		padding-top: 130rpx;
+		box-sizing: border-box;
 	}
 
 	.zone-container-box {
@@ -664,7 +718,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		position: sticky;
+		position: fixed !important;
 		top: 0;
 		color: white;
 	}
@@ -700,6 +754,8 @@
 		width: 100%;
 		background: #F8F9F9;
 		height: 100vh;
+		padding-top: 150rpx;
+		box-sizing: border-box;
 	}
 
 	.head-picture {

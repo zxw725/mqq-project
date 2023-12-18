@@ -35,6 +35,9 @@ public class ZoneComment implements Serializable {
     @TableField("replier_id")
     private Integer replierId;
 
+    @TableField("content")
+    private String content;
+
     @TableField("created_at")
     private LocalDateTime createdAt;
 

@@ -320,7 +320,7 @@
 			},
 			closed() {
 				uni.navigateTo({
-					url: '/pages/home/home'
+					url: '/pages/zone/zone'
 				})
 			},
 			previewImage: function(e) {
@@ -392,11 +392,9 @@
 				});
 			},
 			onTouchStart(event) {
-
 				this.startX1 = event.touches[0].clientX;
 				this.startY1 = event.touches[0].clientY;
 				this.dragging = true;
-
 				if (event.touches.length >= 2) {
 					const x1 = event.touches[0].clientX;
 					const y1 = event.touches[0].clientY;
