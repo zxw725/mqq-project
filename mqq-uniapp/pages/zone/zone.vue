@@ -64,7 +64,7 @@
 					</view>
 					<view class="comment-container">
 						<view class="comment-container-item"
-							@click="replyComment(item2.observeName,item.zone.id,index,item2.zoneComment.replierId)"
+							@click="replyComment(item2.observeName,item.zone.id,index,item2.zoneComment.observerId)"
 							v-for="(item2,index2) in zoneComment[index]">
 							<view class="" style="font-weight: 550;">
 								{{item2.observeName}}
@@ -202,6 +202,7 @@
 		},
 		methods: {
 			replyComment(replyUsername, zoneId, zoneIndex, replyId) {
+				console.log(replyId);
 				this.showZoneInput = true
 				this.replyUsername = replyUsername
 				this.replyId = replyId
@@ -269,7 +270,7 @@
 					url: '/pages/home/home?index=2'
 				})
 			},
-			showCommentZone() {
+			showCommentZone(zoneId,zoneIndex) {
 				this.showZoneInput = true
 				this.replyUsername = ""
 				this.commentPlaceholder = '说点什么吧...'
