@@ -1,75 +1,98 @@
 <template>
 	<view class="container">
-		
-		<view class="" @click="">
+
+		<view class="" style="width: 100%;height: 100vh;overflow: hidden;">
 			<view class="head-container">
 				<view class="iconfont icon-fanhui fanhui" @click="backZone()">
-			
+
 				</view>
 				<view class="head-title">
 					好友动态
 				</view>
 				<view class="iconfont icon-tianjiahaoyou tianjiahaoyou" @click="editZone()">
-			
+
 				</view>
 			</view>
-			<view class="zone-container-box">
-				<view class="zone-container">
-					<view class="zone-container-item" v-for="(item,index) in zones">
-						<view class="zone-top-container">
-							<image class="zone-picture" :src="baseUrl+item.url" mode=""></image>
-							<view class="zone-name-time">
-								<view class="zone-name">
-									{{item.username}}
-								</view>
-								<view class="zone-time">
-									{{filterTime(item.time)}}
-								</view>
+
+			<scroll-view class="zone-container" show-scrollbar="false" :scroll-y="!showZoneInput">
+				<view class="zone-container-item" v-for="(item,index) in zones">
+					<view class="zone-top-container">
+						<image class="zone-picture" :src="baseUrl+item.url" mode=""></image>
+						<view class="zone-name-time">
+							<view class="zone-name">
+								{{item.username}}
+							</view>
+							<view class="zone-time">
+								{{filterTime(item.time)}}
 							</view>
 						</view>
-						<view class="zone-content">
-							<view class="">
-								{{item.zone.content}}
-							</view>
-						</view>
-						<view class="zone-container-picture">
-							<view class="img-container" v-for="(item1,index1) in item.zone.pictures"
-								:class="'img'+(item.zone.pictures.length!=1?0:1)">
-			
-								<view v-if="item1.type=='image'" @click="previewImage(index,index1)">
-									<image :src="item1.url" :mode="item.zone.pictures.length==1?'widthFix':item1.size"
-										class=""></image>
-								</view>
-							</view>
-						</view>
-						<view class="praise-comment">
-							<view class="iconfont icon-a-dianzan1" @click="userPraiseZone(item.zone.id,index)"
-								:class="'dianzan'+zonePraise[index].isPraise">
-			
-							</view>
-							<view class="iconfont icon-a-pinglun2">
-			
-							</view>
-							<view class="iconfont icon-fenxiang">
-			
-							</view>
-						</view>
-						<view class="praise-user-container">
-							<view v-show="zonePraise[index].length!=0" class="iconfont icon-a-dianzan1 dianzan">
-							</view>
-							<view v-show="zonePraise[index].length!=0" class="praise-user"
-								v-for="(item1,index1) in zonePraise[index]">
-								{{index1!=0?'、':''}}{{item1.username}}
-							</view>
-						</view>
-			
-						<div class="comment-user-container">
-							<image :src="headPicture" class="comment-head-picture" mode=""></image>
-							<input @click="showCommentZone()" type="text" class="comment-input" placeholder="说点什么吧...">
-						</div>
 					</view>
+					<view class="zone-content">
+						<view class="">
+							{{item.zone.content}}
+						</view>
+					</view>
+					<view class="zone-container-picture">
+						<view class="img-container" v-for="(item1,index1) in item.zone.pictures"
+							:class="'img'+(item.zone.pictures.length!=1?0:1)">
+
+							<view v-if="item1.type=='image'" @click="previewImage(index,index1)">
+								<image :src="item1.url" :mode="item.zone.pictures.length==1?'widthFix':item1.size"
+									class=""></image>
+							</view>
+						</view>
+					</view>
+					<view class="praise-comment">
+						<view class="iconfont icon-a-dianzan1" @click="userPraiseZone(item.zone.id,index)"
+							:class="'dianzan'+zonePraise[index].isPraise">
+
+						</view>
+						<view class="iconfont icon-a-pinglun2">
+
+						</view>
+						<view class="iconfont icon-fenxiang">
+
+						</view>
+					</view>
+					<view class="praise-user-container">
+						<view v-show="zonePraise[index].length!=0" class="iconfont icon-a-dianzan1 dianzan">
+						</view>
+						<view v-show="zonePraise[index].length!=0" class="praise-user"
+							v-for="(item1,index1) in zonePraise[index]">
+							{{index1!=0?'、':''}}{{item1.username}}
+						</view>
+					</view>
+					<view class="comment-container">
+						<view class="comment-container-item"
+							@click="replyComment(item2.observeName,item.zone.id,index,item2.zoneComment.replierId)"
+							v-for="(item2,index2) in zoneComment[index]">
+							<view class="" style="font-weight: 550;">
+								{{item2.observeName}}
+							</view>
+							<view class="" style="margin: 0 8rpx;" v-show="item2.replierName!=''">
+								回复
+							</view>
+							<view class="" style="font-weight: 550;" v-show="item2.replierName!=''">
+								{{item2.replierName}}
+							</view>
+							<view class="" style="font-weight: 550;margin-right: 8rpx;">
+								:
+							</view>
+							<view class="">
+								{{item2.zoneComment.content}}
+							</view>
+						</view>
+					</view>
+
+					<view class="comment-user-container">
+						<image :src="headPicture" class="comment-head-picture" mode=""></image>
+						<input @click="showCommentZone(item.zone.id,index)" type="text" class="comment-input"
+							placeholder="说点什么吧...">
+					</view>
+
 				</view>
-			</view>
+			</scroll-view>
+
 			<view class="preview" v-show="previewShow" @click="tapPreview()" @touchstart="onTouchStart"
 				@touchmove="onTouchMove" @touchend="onTouchEnd">
 				<view class="preview-container">
@@ -82,15 +105,18 @@
 					</view>
 				</view>
 			</view>
-			
 		</view>
-		
-		<view class="bottom-container" @click="showCommentZone()">
-			<textarea v-if="showZoneInput" :focus="showZoneInput" :blur="showZoneInput" @blur="blurZoneInput"
-				@focus="showZoneInput=true" v-model="commentText" :adjust-position="false" :cursor-spacing="8"
-				class="zone-comment" placeholder="" auto-height ref="input"></textarea>
-			<button v-if="showZoneInput" :class="commentText!=''?'chat-submit-ing':'chat-submit'" @click="sendMessage()">发送</button>
-			<!-- <button :class="chatText!=''?'chat-submit-ing':'chat-submit'" @click="sendMessage()">发送</button> -->
+		<view class="background" v-if="showZoneInput" @click="blurZoneInput()">
+
+		</view>
+		<view class="bottom-container">
+			<view class="bottom-container" style="padding: 15rpx 20rpx;background: white;" v-if="showZoneInput">
+				<textarea v-if="showZoneInput" :focus="showZoneInput" :blur="showZoneInput" @focus="showZoneInput=true"
+					v-model="commentText" :adjust-position="false" :cursor-spacing="8" class="zone-comment"
+					:placeholder="commentPlaceholder" auto-height ref="input"></textarea>
+				<button v-if="showZoneInput" :class="commentText!=''?'chat-submit-ing':'chat-submit'"
+					@click="sendComment()">发送</button>
+			</view>
 		</view>
 	</view>
 </template>
@@ -109,7 +135,10 @@
 		getAllPraise,
 		cancelPraiseZone
 	} from '../../api/zonePraise.js'
-
+	import {
+		commentZone,
+		getAllComment
+	} from '../../api/zoneComment.js'
 	export default {
 		data() {
 			return {
@@ -162,15 +191,78 @@
 				zonePraise: [],
 				zoneComment: [],
 				isPraising: 1,
-				user: []
+				user: [],
+				isBlur: true,
+				commentPlaceholder: '说点什么吧...',
+				replyUsername: '',
+				zoneId: '',
+				zoneIndex: 0,
+				replyId: 0
 			}
 		},
 		methods: {
-			blurZoneInput() {
-				setTimeout(() => {
+			replyComment(replyUsername, zoneId, zoneIndex, replyId) {
+				this.showZoneInput = true
+				this.replyUsername = replyUsername
+				this.replyId = replyId
+				this.commentPlaceholder = "回复" + this.replyUsername + ":"
+				this.zoneId = zoneId
+				this.zoneIndex = zoneIndex
+			},
+			sendComment() {
+				if (this.commentText != '') {
 					this.showZoneInput = false
-					this.commentText = ''
-				}, 0)
+					var obj = {}
+					console.log(this.commentText);
+					var zoneComment = {}
+					obj.observeName = this.user.username
+					obj.replierName = this.replyUsername
+					if (this.replyUsername != '') {
+						zoneComment = {
+							zoneId: this.zoneId,
+							observerId: this.username,
+							replierId: this.replyId,
+							content: this.commentText
+						}
+						obj.zoneComment = zoneComment
+					} else {
+						zoneComment = {
+							zoneId: this.zoneId,
+							observerId: this.username,
+							content: this.commentText
+						}
+						obj.zoneComment = zoneComment
+					}
+					console.log(obj);
+					this.zoneComment[this.zoneIndex].push(obj)
+					if (this.replyUsername != '') {
+						commentZone(zoneComment).then(res => {
+							console.log(res);
+							this.commentText = ''
+						})
+					} else {
+						commentZone(zoneComment).then(res => {
+							console.log(res);
+							this.commentText = ''
+						})
+					}
+
+
+				}
+				
+			},
+			blurZoneInput() {
+				this.replyUsername = ""
+				this.commentText = ''
+				if (this.isBlur) {
+					setTimeout(() => {
+						this.showZoneInput = false
+					}, 0)
+				} else {
+					this.commentPlaceholder = '说点什么吧...'
+					this.showZoneInput = true
+				}
+
 			},
 			backZone() {
 				uni.navigateTo({
@@ -178,9 +270,15 @@
 				})
 			},
 			showCommentZone() {
-
-				console.log(this.showZoneInput);
-				this.showZoneInput =  true
+				this.showZoneInput = true
+				this.replyUsername = ""
+				this.commentPlaceholder = '说点什么吧...'
+				this.zoneId = zoneId
+				this.zoneIndex = zoneIndex
+				this.isBlur = false
+				setTimeout(() => {
+					this.isBlur = true
+				})
 
 			},
 			userPraiseZone(id, index, index1) {
@@ -311,11 +409,9 @@
 				});
 			},
 			onTouchStart(event) {
-
 				this.startX1 = event.touches[0].clientX;
 				this.startY1 = event.touches[0].clientY;
 				this.dragging = true;
-
 				if (event.touches.length >= 2) {
 					const x1 = event.touches[0].clientX;
 					const y1 = event.touches[0].clientY;
@@ -418,6 +514,7 @@
 						const screenHeight = res.screenHeight
 					}
 				});
+
 				getAllZones(this.username).then(res => {
 					var zones = res.data.data
 					if (uni.getStorageSync("zones")) {
@@ -432,11 +529,17 @@
 					zones.filter((item, index) => {
 						getAllPraise(item.zone.id + '').then(res => {
 							var obj = res.data.data
-							obj.isPraise = res.data.data.some(obj => obj.id == this.username) ? 1 :
+							obj.isPraise = res.data.data.some(obj1 => obj1.id == this.username) ?
+								1 :
 								0
 							this.zonePraise.push(res.data.data)
 							this.$forceUpdate()
 							// console.log(obj,res.data.data.some(obj => obj.id == this.username));
+						})
+						getAllComment(item.zone.id + '').then(res => {
+							console.log(res.data.data);
+							this.zoneComment.push(res.data.data)
+							this.$forceUpdate()
 						})
 						this.zones.filter((item, index) => {
 							// console.log(!(zones.some(obj => obj.zone.id == item.zone.id)));
@@ -565,10 +668,30 @@
 </script>
 
 <style scoped>
+	.comment-container-item {
+		display: flex;
+		margin-bottom: 10rpx;
+	}
+
+	.comment-container {
+		margin-top: 20rpx;
+	}
+
+	.background {
+		background: #019AFE00;
+		width: 100%;
+		height: 100vh;
+		z-index: 11;
+		position: absolute;
+		top: 0;
+		left: 0;
+
+	}
+
 	.chat-submit-ing,
 	.chat-submit {
 		width: 140rpx;
-		height: 80rpx;
+		height: 70rpx;
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -577,11 +700,11 @@
 		color: white;
 		font-size: 30rpx;
 	}
-	
+
 	.chat-submit-ing {
 		background: #019AFE;
 	}
-	
+
 	.fanhui {
 		font-size: 55rpx;
 	}
@@ -612,7 +735,7 @@
 	}
 
 	.bottom-container {
-		padding: 15rpx 20rpx;
+
 		caret-color: #4772ff;
 		box-sizing: border-box;
 		/* max-height:400rpx; */
@@ -625,6 +748,7 @@
 		background: white;
 		align-items: flex-end;
 		overflow: hidden;
+		background: #F5F5F5;
 		z-index: 1111;
 
 	}
@@ -643,6 +767,7 @@
 	.comment-user-container {
 		display: flex;
 		margin-top: 20rpx;
+		align-items: center;
 	}
 
 	.comment-head-picture {
@@ -797,17 +922,17 @@
 
 	.zone-container {
 		width: 100%;
-		overflow-y: scroll;
+		height: 100%;
 		padding-top: 130rpx;
 		box-sizing: border-box;
 	}
 
-	.zone-container-box {
+	/* 	.zone-container-box {
 		padding-bottom: 120rpx;
 		box-sizing: border-box;
 		background: #F8F9F9;
 	}
-
+ */
 	.box-card {
 		width: 800px;
 

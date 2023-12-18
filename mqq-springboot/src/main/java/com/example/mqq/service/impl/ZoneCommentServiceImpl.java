@@ -3,7 +3,6 @@ package com.example.mqq.service.impl;
 import com.example.mqq.entity.*;
 import com.example.mqq.mapper.UserMapper;
 import com.example.mqq.mapper.ZoneCommentMapper;
-import com.example.mqq.mapper.ZonePraiseMapper;
 import com.example.mqq.service.ZoneCommentService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.yulichang.toolkit.JoinWrappers;
@@ -44,9 +43,11 @@ public class ZoneCommentServiceImpl extends ServiceImpl<ZoneCommentMapper, ZoneC
     @Override
     public List<ZoneCommentVo> getAllComment(int id) {
         val wrapper1 = JoinWrappers.lambda(ZoneComment.class)
-                .selectAll(ZoneComment.class);
+                .selectAll(ZoneComment.class)
+                .eq(ZoneComment::getZoneId,id);
         List<ZoneComment> zoneComment = zoneCommentMapper.selectList(wrapper1);
         List<ZoneCommentVo> zoneComments=new ArrayList<>();
+        System.out.println(id);
         for(ZoneComment zoneComment1:zoneComment){
 
             val wrapper2 = JoinWrappers.lambda(User.class)
@@ -57,8 +58,16 @@ public class ZoneCommentServiceImpl extends ServiceImpl<ZoneCommentMapper, ZoneC
                     .eq(User::getId,zoneComment1.getReplierId());
             User observer = userMapper.selectOne(wrapper2);
             User replier = userMapper.selectOne(wrapper3);
-            ZoneCommentVo zoneCommentVo2 = new ZoneCommentVo(zoneComment1,observer.getUsername(),replier.getUsername());
-            zoneComments.add(zoneCommentVo2);
+
+            System.out.println(replier);
+            if(replier!=null){
+                ZoneCommentVo zoneCommentVo2 = new ZoneCommentVo(zoneComment1,observer.getUsername(),replier.getUsername());
+                zoneComments.add(zoneCommentVo2);
+            }else{
+                ZoneCommentVo zoneCommentVo2 = new ZoneCommentVo(zoneComment1,observer.getUsername(),"");
+                zoneComments.add(zoneCommentVo2);
+            }
+
         }
 
 //        List<ZoneCommentVo> zoneComments = userMapper.selectList(wrapper1);

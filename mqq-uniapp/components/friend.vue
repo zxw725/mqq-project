@@ -12,11 +12,8 @@
 		</view>
 		<scroll-view style="z-index: 1111;" class="friend-box" :scroll-y="isTop" @scroll="handleScroll"
 			:scroll-into-view="scrollIntoView" show-scrollbar="false">
-
 			<ul v-for="(item, index) in phone" :key="index" class="friend-box-item">
-
 				<li v-for="(value, key) in item" :key="key">
-
 					<view :ref="'view'+key" :id="'view'+key" :class="scrollIntoView1=='view'+key?'right-nav-active':''">
 						{{ key }}
 					</view>
